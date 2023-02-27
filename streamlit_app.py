@@ -1,63 +1,35 @@
-import streamlit
-import mysql.connector
-import pandas as pd
-import matplotlib.pyplot as plt
+import streamlit as st
 
-# Establish database connection
-mydb = mysql.connector.connect(
-    host="remote_host",
-    user="username",
-    password="password",
-    database="database_name"
-)
+# create a sidebar menu
+menu = ["Dashboard", "Members", "Classes", "Bookings"]
+choice = st.sidebar.selectbox("Select a page", menu)
 
-# Define function to retrieve data from MySQL server
-def retrieve_data(start_date, end_date):
-    # Query to retrieve data from database based on user input
-    query = "SELECT * FROM table_name WHERE date BETWEEN '{}' AND '{}'".format(start_date, end_date)
+# create a function for the dashboard page
+def dashboard():
+  st.title("Gym Management Dashboard")
+  # include relevant information about the gym's performance, such as membership numbers, revenue, etc.
 
-    # Execute query and store results in a Pandas DataFrame
-    df = pd.read_sql(query, con=mydb)
+# create a function for the members page
+def members():
+  st.title("Gym Members")
+  # include a table displaying the gym's members, their membership details, and any other relevant information.
 
-    return df
+# create a function for the classes page
+def classes():
+  st.title("Gym Classes")
+  # include a table displaying the gym's class schedule, including the class name, time, and location.
 
-# Define function to plot comparison graph of two time periods
-def plot_comparison_graph(df, start_date_1, end_date_1, start_date_2, end_date_2):
-    # Create two subplots side by side
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+# create a function for the bookings page
+def bookings():
+  st.title("Gym Bookings")
+  # include a table displaying the gym's current bookings, including the member name, class name, and booking time.
 
-    # Plot data for first time period
-    df1 = df[(df['date'] >= start_date_1) & (df['date'] <= end_date_1)]
-    ax1.plot(df1['date'], df1['data'], label='Time Period 1')
-
-    # Plot data for second time period
-    df2 = df[(df['date'] >= start_date_2) & (df['date'] <= end_date_2)]
-    ax1.plot(df2['date'], df2['data'], label='Time Period 2')
-
-    # Highlight major drops in data
-    threshold = df['data'].quantile(0.10) # set threshold to 10th percentile of data
-    ax2.axhline(y=threshold, linestyle='--', color='r')
-    ax2.plot(df['date'], df['data'])
-    ax2.fill_between(df['date'], threshold, df['data'], where=df['data'] <= threshold, color='red', alpha=0.5)
-
-    # Set axis labels and legend
-    ax1.set_xlabel('Date')
-    ax1.set_ylabel('Data')
-    ax1.legend()
-    ax2.set_xlabel('Date')
-    ax2.set_ylabel('Data')
-
-    # Show plot
-    plt.show()
-
-# User input for date range
-start_date_1 = '2022-01-01'
-end_date_1 = '2022-01-31'
-start_date_2 = '2022-02-01'
-end_date_2 = '2022-02-28'
-
-# Retrieve data from MySQL server
-df = retrieve_data(start_date_1, end_date_2)
-
-# Plot comparison graph of two time periods with major drops highlighted
-plot_comparison_graph(df, start_date_1, end_date_1, start_date_2, end_date_2)
+# use conditional statements to display the appropriate page based on user choice
+if choice == "Dashboard":
+  dashboard()
+elif choice == "Members":
+  members()
+elif choice == "Classes":
+  classes()
+elif choice == "Bookings":
+  bookings()
