@@ -1,43 +1,63 @@
-import streamlit as st
+import streamlit
+import mysql.connector
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# Set up the sidebar options
-st.sidebar.title("Gym App")
-options = ["Home", "Equipment", "Classes", "Membership"]
-choice = st.sidebar.selectbox("Select an option", options)
+# Establish database connection
+mydb = mysql.connector.connect(
+    host="remote_host",
+    user="username",
+    password="password",
+    database="database_name"
+)
 
-# Set up the pages
-if choice == "Home":
-    st.title("Welcome to our gym!")
-    st.write("We offer a wide range of equipment and classes to help you reach your fitness goals.")
+# Define function to retrieve data from MySQL server
+def retrieve_data(start_date, end_date):
+    # Query to retrieve data from database based on user input
+    query = "SELECT * FROM table_name WHERE date BETWEEN '{}' AND '{}'".format(start_date, end_date)
 
-elif choice == "Equipment":
-    st.title("Equipment")
-    equipment_list = ["Treadmill", "Elliptical", "Weight Machines", "Free Weights"]
-    equipment = st.selectbox("Select an equipment", equipment_list)
-    if equipment == "Treadmill":
-        st.write("Our treadmills are state-of-the-art and perfect for cardio workouts.")
-    elif equipment == "Elliptical":
-        st.write("Our ellipticals provide a low-impact workout that's easy on your joints.")
-    elif equipment == "Weight Machines":
-        st.write("Our weight machines target specific muscle groups for a comprehensive strength training workout.")
-    elif equipment == "Free Weights":
-        st.write("Our free weights area has a wide range of dumbbells and barbells for your strength training needs.")
+    # Execute query and store results in a Pandas DataFrame
+    df = pd.read_sql(query, con=mydb)
 
-elif choice == "Classes":
-    st.title("Classes")
-    class_list = ["Yoga", "Pilates", "Spin", "Zumba"]
-    gym_class = st.selectbox("Select a class", class_list)
-    if gym_class == "Yoga":
-        st.write("Our yoga classes focus on flexibility, strength, and balance.")
-    elif gym_class == "Pilates":
-        st.write("Our Pilates classes are designed to strengthen your core and improve your posture.")
-    elif gym_class == "Spin":
-        st.write("Our spin classes provide an intense cardiovascular workout on stationary bikes.")
-    elif gym_class == "Zumba":
-        st.write("Our Zumba classes combine dance and fitness for a fun, full-body workout.")
+    return df
 
-elif choice == "Membership":
-    st.title("Membership")
-    st.write("To become a member of our gym, please visit our website or stop by our location to sign up.")
+# Define function to plot comparison graph of two time periods
+def plot_comparison_graph(df, start_date_1, end_date_1, start_date_2, end_date_2):
+    # Create two subplots side by side
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
 
+    # Plot data for first time period
+    df1 = df[(df['date'] >= start_date_1) & (df['date'] <= end_date_1)]
+    ax1.plot(df1['date'], df1['data'], label='Time Period 1')
 
+    # Plot data for second time period
+    df2 = df[(df['date'] >= start_date_2) & (df['date'] <= end_date_2)]
+    ax1.plot(df2['date'], df2['data'], label='Time Period 2')
+
+    # Highlight major drops in data
+    threshold = df['data'].quantile(0.10) # set threshold to 10th percentile of data
+    ax2.axhline(y=threshold, linestyle='--', color='r')
+    ax2.plot(df['date'], df['data'])
+    ax2.fill_between(df['date'], threshold, df['data'], where=df['data'] <= threshold, color='red', alpha=0.5)
+
+    # Set axis labels and legend
+    ax1.set_xlabel('Date')
+    ax1.set_ylabel('Data')
+    ax1.legend()
+    ax2.set_xlabel('Date')
+    ax2.set_ylabel('Data')
+
+    # Show plot
+    plt.show()
+
+# User input for date range
+start_date_1 = '2022-01-01'
+end_date_1 = '2022-01-31'
+start_date_2 = '2022-02-01'
+end_date_2 = '2022-02-28'
+
+# Retrieve data from MySQL server
+df = retrieve_data(start_date_1, end_date_2)
+
+# Plot comparison graph of two time periods with major drops highlighted
+plot_comparison_graph(df, start_date_1, end_date_1, start_date_2, end_date_2)
