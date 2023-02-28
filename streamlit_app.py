@@ -8,7 +8,7 @@ def main():
     page_bg_img = '''
     <style>
     .stApp {
-      background-image: url("https://cdn.pixabay.com/photo/2016/11/29/03/20/background-1869755_960_720.png");
+      background-image: url("https://i.pinimg.com/originals/0e/39/c2/0e39c256714a4b7c0299323a82701647.jpg");
       background-size: cover;
     }
     </style>
