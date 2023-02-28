@@ -2,7 +2,7 @@ import streamlit as st
 
 def main():
     # Set page title
-    st.set_page_config(page_title="Om Prakash Yadav", page_icon=":guardsman:", layout="wide")
+    st.set_page_config(page_title="My Portfolio Website", page_icon=":guardsman:", layout="wide")
 
     # Set background color and banner image
     page_bg_img = '''
@@ -21,19 +21,22 @@ def main():
     selection = st.sidebar.radio("Go to", pages)
 
     # Set profile picture
-    st.image("https://www.canva.com/design/DAFbRVgl8GI/kqeXUDAHFfSeZMmb1uaicg/view?utm_content=DAFbRVgl8GI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton", width=250, 
+    st.image("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png", width=250, 
              caption="My Profile Picture", use_column_width=False,
              output_format="PNG", style="display: block; margin: auto;")
-
-    # Set page title and subtitle
-    st.title("My Portfolio Website")
-    st.write("Welcome to my portfolio website!")
 
     # Show selected page content
     if selection == "Home":
         st.header("Home")
+
+        # Add profile photo
+        st.image("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png", width=200, 
+             caption="My Profile Picture", use_column_width=False,
+             output_format="PNG", style="display: block; margin: auto;")
+
+        # Add introduction
         st.write("""
-        This is the home page. Here, you can add any content you want to share with visitors to your website.
+        Hi there! I'm Jane Doe, a software developer with 5 years of experience in Python and web development. I'm passionate about building software that solves real-world problems and makes people's lives easier. In my free time, I enjoy hiking, reading, and playing the guitar. Thanks for visiting my portfolio website!
         """)
 
     elif selection == "Skills and Experiences":
